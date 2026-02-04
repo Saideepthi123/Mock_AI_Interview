@@ -27,81 +27,102 @@ class MaxUniqueCharacters {
      *   (i.e., any element is not a {@code String}).
      */
     static Set<String> maximizeUniqueCharacters(List<?> words) {
-        if (words == null) {
-            throw new IllegalArgumentException("Input list cannot be null");
-        }
-        List<String> stringWords = new ArrayList<>();
-        for (Object obj : words) {
-            if (!(obj instanceof String)) {
-                throw new IllegalArgumentException("All elements must be strings");
-            }
-            stringWords.add((String) obj);
-        }
-
-        // Filter words with unique characters
-        List<String> validWords = new ArrayList<>();
-        for (String word : stringWords) {
-            if (hasUniqueChars(word)) {
-                validWords.add(word);
-            }
-        }
-
-        // Sort by length descending to try larger words first
-        validWords.sort((a, b) -> Integer.compare(b.length(), a.length()));
-
-        // Backtracking to find the best subset
-        int[] bestScore = {0};
-        Set<String> bestSubset = new HashSet<>();
-        backtrack(validWords, 0, new HashSet<>(), new HashSet<>(), bestScore, bestSubset);
-
-        return bestSubset;
+    if (words == null) {
+        return Set.of();
     }
 
-    private static boolean hasUniqueChars(String word) {
-        Set<Character> seen = new HashSet<>();
-        for (char c : word.toCharArray()) {
-            if (!seen.add(c)) {
-                return false;
-            }
-        }
-        return true;
-    }
+    List<String> validWords = new java.util.ArrayList<>();
+    List<Set<Character>> charSets = new java.util.ArrayList<>();
 
-    private static void backtrack(List<String> words, int index, Set<Character> usedChars, Set<String> currentSubset, int[] bestScore, Set<String> bestSubset) {
-        if (index == words.size()) {
-            int score = usedChars.size();
-            if (score > bestScore[0]) {
-                bestScore[0] = score;
-                bestSubset.clear();
-                bestSubset.addAll(currentSubset);
-            }
-            return;
+    // Requirement 1: validation + preprocessing
+    for (Object obj : words) {
+        if (!(obj instanceof String)) {
+            throw new IllegalArgumentException("All elements must be strings");
         }
 
-        String word = words.get(index);
+        String word = (String) obj;
+        Set<Character> chars = new HashSet<>();
+        boolean hasDuplicate = false;
 
-        // Skip this word
-        backtrack(words, index + 1, usedChars, currentSubset, bestScore, bestSubset);
-
-        // Try to add this word if no conflict
-        boolean canAdd = true;
-        for (char c : word.toCharArray()) {
-            if (usedChars.contains(c)) {
-                canAdd = false;
+        for (int i = 0; i < word.length(); i++) {
+            if (!chars.add(word.charAt(i))) {
+                hasDuplicate = true;
                 break;
             }
         }
-        if (canAdd) {
-            currentSubset.add(word);
-            for (char c : word.toCharArray()) {
-                usedChars.add(c);
-            }
-            backtrack(words, index + 1, usedChars, currentSubset, bestScore, bestSubset);
-            // Backtrack
-            currentSubset.remove(word);
-            for (char c : word.toCharArray()) {
-                usedChars.remove(c);
-            }
+
+        if (!hasDuplicate) {
+            validWords.add(word);
+            charSets.add(chars);
         }
     }
+
+    // Backtracking state
+    Set<Character> usedChars = new HashSet<>();
+    Set<String> current = new HashSet<>();
+    Set<String> best = new HashSet<>();
+
+    backtrack(validWords, charSets, 0, usedChars, current, best);
+
+    return best;
+}
+
+/**
+ * Explore all subsets and keep the one with maximum distinct characters.
+ */
+private static void backtrack(
+        List<String> words,
+        List<Set<Character>> charSets,
+        int index,
+        Set<Character> usedChars,
+        Set<String> current,
+        Set<String> best
+) {
+    // Update best if current is better
+    if (usedChars.size() > bestSize(best)) {
+        best.clear();
+        best.addAll(current);
+    }
+
+    // Base case
+    if (index == words.size()) {
+        return;
+    }
+
+    // Option 1: skip current word
+    backtrack(words, charSets, index + 1, usedChars, current, best);
+
+    // Option 2: include current word if no overlap
+    Set<Character> chars = charSets.get(index);
+    if (canUse(chars, usedChars)) {
+        // Add chars
+        for (char c : chars) usedChars.add(c);
+        current.add(words.get(index));
+
+        backtrack(words, charSets, index + 1, usedChars, current, best);
+
+        // Backtrack
+        current.remove(words.get(index));
+        for (char c : chars) usedChars.remove(c);
+    }
+}
+
+// Helper: check overlap
+private static boolean canUse(Set<Character> chars, Set<Character> used) {
+    for (char c : chars) {
+        if (used.contains(c)) return false;
+    }
+    return true;
+}
+
+// Helper: compute total distinct chars in chosen set
+private static int bestSize(Set<String> set) {
+    Set<Character> tmp = new HashSet<>();
+    for (String s : set) {
+        for (int i = 0; i < s.length(); i++) {
+            tmp.add(s.charAt(i));
+        }
+    }
+    return tmp.size();
+}
 }
