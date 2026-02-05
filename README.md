@@ -29,27 +29,35 @@ powershell -Command "Send-MailMessage -To 'user@example.com' -From 'build@exampl
 4. Topological sort -> order targets respecting dependencies, 
 5. detect cycles and fail
 
-**Code flow**
+## Code Flow
 
-- Target.java : 
-Data model representing a build rule
-Holds inputs, outputs, and command
+### Target.java
+- Data model representing a single build rule
+- Holds:
+  - `inputs`
+  - `outputs`
+  - `command`
 
-- DependencyGraphBuilder.java : 
+---
 
-Maps outputs → producers
-Builds dependency graph
-Performs topological sort
-Detects cycles and invalid configs
+### DependencyGraphBuilder.java
+- Maps output files → producing targets
+- Builds the dependency graph (producer → consumer)
+- Performs topological sort
+- Detects cycles and invalid configurations
 
-- Main.java :
+---
 
-Entry point
-Reads JSON file
-Builds graph
-Prints commands in execution order
+### Main.java
+- Entry point of the program
+- Reads the JSON file
+- Builds the dependency graph
+- Prints build commands in execution order
 
-**Code output** :
+---
+
+##Code output## :
+
 ![Build Output](images/output.png)
 
 
