@@ -1,4 +1,4 @@
-Question
+**Question**
 
 Given a json file that specifies build targets and rules, write a program that simulates a build engine by printing out the commands in an acceptable order based on the dependencies specified. Assume anything under src/ and include/ already exists. For any other files, there must be an entry under "targets" that produces them.
 
@@ -10,7 +10,7 @@ cl.exe /EHsc /Iinclude src/main.cpp build/math_utils.lib build/string_helpers.li
 powershell -Command "Send-MailMessage -To 'user@example.com' -From 'build@example.com' -Subject 'Build Complete'"
 
 
-High level of code 
+**High level of code** 
 
 1. Parse json into targets 
 2. map  files -> producign the target -a. src/, include already existed , any other input must produce exactly one target
@@ -18,26 +18,27 @@ High level of code
 4. Topological sort -> order targets respecting dependencies, 
 5. detect cycles and fail
 
-Code flow 
+**Code flow**
 
-Target : 
+- Target.java : 
 Data model representing a build rule
 Holds inputs, outputs, and command
 
-DependencyGraphBuilder : 
+- DependencyGraphBuilder.java : 
 
 Maps outputs → producers
 Builds dependency graph
 Performs topological sort
 Detects cycles and invalid configs
 
-Main :
+- Main.java :
 
 Entry point
 Reads JSON file
 Builds graph
 Prints commands in execution order
 
-Code output :
+**Code output** :
+![Build Output](images/output.png)
 
 
