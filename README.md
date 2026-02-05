@@ -21,13 +21,23 @@ cl.exe /EHsc /Iinclude src/main.cpp build/math_utils.lib build/string_helpers.li
 powershell -Command "Send-MailMessage -To 'user@example.com' -From 'build@example.com' -Subject 'Build Complete'"
 ```
 
-**High level of code** 
+**High level Approach** 
 
-1. Parse json into targets 
-2. map  files -> producign the target -a. src/, include already existed , any other input must produce exactly one target
-3. bulding the dependecy graph , graph : producer -> consumer 
-4. Topological sort -> order targets respecting dependencies, 
-5. detect cycles and fail
+1. Parse the JSON file into build targets.
+
+2. Map output files → producing targets.
+
+    - Files under src/ and include/ are treated as pre-existing.
+
+    - Every other input file must have exactly one producer.
+
+3. Build a dependency graph:
+
+   - Directed edge: producer → consumer.
+
+4. Perform a topological sort to determine execution order.
+
+5. Detect cycles and invalid configurations and fail fast.
 
 ## Code Flow
 
@@ -56,7 +66,7 @@ powershell -Command "Send-MailMessage -To 'user@example.com' -From 'build@exampl
 
 ---
 
-##Code output## :
+## Code output :
 
 ![Build Output](images/output.png)
 
