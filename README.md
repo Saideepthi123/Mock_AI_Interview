@@ -19,6 +19,7 @@ cl.exe /LD /EHsc /Yu /Iinclude /Fp:build/pch.pch src/math_utils.cpp /Fo:build/ /
 cl.exe /LD /EHsc /Yu /Iinclude /Fp:build/pch.pch src/string_helpers.cpp /Fo:build/ /Fe:build/string_helpers.dll
 cl.exe /EHsc /Iinclude src/main.cpp build/math_utils.lib build/string_helpers.lib /Fo:build/ /Fe:build/program.exe
 powershell -Command "Send-MailMessage -To 'user@example.com' -From 'build@example.com' -Subject 'Build Complete'"
+```
 
 **High level of code** 
 
@@ -28,33 +29,27 @@ powershell -Command "Send-MailMessage -To 'user@example.com' -From 'build@exampl
 4. Topological sort -> order targets respecting dependencies, 
 5. detect cycles and fail
 
-## Code Flow
+**Code flow**
 
-### Target.java
-- Data model representing a single build rule
-- Holds:
-  - `inputs`
-  - `outputs`
-  - `command`
+- Target.java : 
+Data model representing a build rule
+Holds inputs, outputs, and command
 
----
+- DependencyGraphBuilder.java : 
 
-### DependencyGraphBuilder.java
-- Maps output files → producing targets
-- Builds the dependency graph (producer → consumer)
-- Performs topological sort
-- Detects cycles and invalid configurations
+Maps outputs → producers
+Builds dependency graph
+Performs topological sort
+Detects cycles and invalid configs
 
----
+- Main.java :
 
-### Main.java
-- Entry point of the program
-- Reads the JSON file
-- Builds the dependency graph
-- Prints build commands in execution order
+Entry point
+Reads JSON file
+Builds graph
+Prints commands in execution order
 
----
-
-## Code Output
-
+**Code output** :
 ![Build Output](images/output.png)
+
+
