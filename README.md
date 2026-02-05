@@ -1,36 +1,13 @@
-# Microsoft_AI_Interview
-Maximize Unique Characters from a List of Strings
-You are given a collection of strings words, where each element is a complete string (a “word”).
+Given a json file that specifies build targets and rules, write a program that simulates a build engine by printing out the commands in an acceptable order based on the dependencies specified. Assume anything under src/ and include/ already exists. For any other files, there must be an entry under "targets" that produces them.
 
-Each string is drawn from some fixed alphabet (depending on the input), for example:
+cl.exe /EHsc /Yc /Iinclude src/pch.cpp /Fp:build/pch.pch /Fo:build/
+cl.exe /LD /EHsc /Yu /Iinclude /Fp:build/pch.pch src/math_utils.cpp /Fo:build/ /Fe:build/math_utils.dll
+cl.exe /LD /EHsc /Yu /Iinclude /Fp:build/pch.pch src/string_helpers.cpp /Fo:build/ /Fe:build/string_helpers.dll
+cl.exe /EHsc /Iinclude src/main.cpp build/math_utils.lib build/string_helpers.lib /Fo:build/ /Fe:build/program.exe
+powershell -Command "Send-MailMessage -To 'user@example.com' -From 'build@example.com' -Subject 'Build Complete'"
 
-letters a–z (like Wordle word lists), or
-digits 0–9 (e.g., numbers represented as strings), or
-any mix of characters.
-Your task is to select a subset of these strings such that:
-
-No character is used more than once across the entire chosen subset. If a character appears in one selected string, it must not appear in any other selected string.
-The chosen subset maximizes the total number of distinct characters used (equivalently: maximizes the total number of characters across the chosen strings, since selected strings must be character-disjoint).
-Important clarification: words is intended to be a container such as a list/array/set of strings, where each element is one candidate string. A single string value (for example "abc") is not considered a valid words input.
-
-Important rule: invalid strings
-If a string contains a repeated character within itself, it can never be selected.
-
-Examples:
-
-"hello" is invalid (two ls)
-"1001" is invalid (repeats 1 and 0)
-"abc" is valid
-Invalid strings are simply unselectable — your function should not throw an error because of them.
-
-Input / Output
-Input: a list/array/container of strings words.
-Output: the chosen subset as a set-like collection of strings.
-It must contain only strings that appear in the input.
-Any two selected strings must be character-disjoint.
-The selection must be optimal (maximum possible number of distinct characters).
-Error handling
-If the input is not a collection of strings (i.e., any element is not a string), your function should raise/throw an appropriate type error according to the language’s conventions.
-Notes
-Characters are treated as case-sensitive unless explicitly stated otherwise (e.g., 'A' and 'a' are different characters).
-The test suite for this drill is designed so that the optimal answer is unique, allowing the result to be asserted directly.
+1. Parse json into targets 
+2. map  files -> producign the target -a. src/, include already existed , any other input must produce exactly one target
+3. bulding the dependecy graph , graph : producer -> consumer 
+4. order targets respecting dependencies, 
+5. detect cycles and fail

@@ -1,0 +1,61 @@
+{
+    "targets": [
+        {
+            "name": "Link program.exe",
+            "inputs": [
+                "src/main.cpp",
+                "build/math_utils.lib",
+                "build/string_helpers.lib"
+            ],
+            "outputs": [
+                "build/program.exe"
+            ],
+            "command": "cl.exe /EHsc /Iinclude src/main.cpp build/math_utils.lib build/string_helpers.lib /Fo:build/ /Fe:build/program.exe"
+        },
+        {
+            "name": "Precompile pch.pch",
+            "inputs": [
+                "include/pch.h",
+                "src/pch.cpp"
+            ],
+            "outputs": [
+                "build/pch.pch"
+            ],
+            "command": "cl.exe /EHsc /Yc /Iinclude src/pch.cpp /Fp:build/pch.pch /Fo:build/"
+        },
+        {
+            "name": "Link math_utils.dll",
+            "inputs": [
+                "src/math_utils.cpp",
+                "include/math_utils.h",
+                "build/pch.pch"
+            ],
+            "outputs": [
+                "build/math_utils.dll",
+                "build/math_utils.lib"
+            ],
+            "command": "cl.exe /LD /EHsc /Yu /Iinclude /Fp:build/pch.pch src/math_utils.cpp /Fo:build/ /Fe:build/math_utils.dll"
+        },
+        {
+            "name": "Link string_helpers.dll",
+            "inputs": [
+                "src/string_helpers.cpp",
+                "include/string_helpers.h",
+                "build/pch.pch"
+            ],
+            "outputs": [
+                "build/string_helpers.dll",
+                "build/string_helpers.lib"
+            ],
+            "command": "cl.exe /LD /EHsc /Yu /Iinclude /Fp:build/pch.pch src/string_helpers.cpp /Fo:build/ /Fe:build/string_helpers.dll"
+        },
+        {
+            "name": "Email the team",
+            "inputs": [
+                "build/program.exe"
+            ],
+            "outputs": [],
+            "command": "powershell -Command \"Send-MailMessage -To 'user@example.com' -From 'build@example.com' -Subject 'Build Complete'\""
+        }
+    ]
+}
